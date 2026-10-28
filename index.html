@@ -1,44 +1,56 @@
 <!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Коммерческое предложение — Конверсус</title>
+<title>Конверсус — встреча с клиентом</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-</head><body>
-<div id="app">
-<aside id="ed">
- <div class="edh"><b>Конструктор КП</b><a href="#" id="back">← Калькулятор смет</a></div>
- <fieldset><legend>Клиент</legend>
-  <label>Название клиента<input id="client" type="text"></label>
-  <label>Логотип клиента (необязательно)<input id="logo" type="file" accept="image/*"></label>
-  <button class="sm" id="logoX" type="button">Убрать логотип</button>
-  <label>Задача клиента<textarea id="task" rows="4"></textarea></label>
-  <div class="two"><label>Дата КП<input id="date" type="date"></label><label>Действительно до<input id="valid" type="date"></label></div>
- </fieldset>
- <fieldset><legend>Блоки</legend><div id="blocks"></div>
-  <div id="painsBox" class="sub"><small>Боли клиента:</small><div id="pains"></div></div>
- </fieldset>
- <fieldset><legend>Расчёт</legend>
-  <div class="seg" id="gsel"></div><div class="seg" id="vsel"></div>
-  <label>Название проекта<input id="proj" type="text"></label>
-  <div class="two"><label>Ставка за час, ₽<input id="rate" type="number" min="0" step="100"></label><label>Налог, %<input id="tax" type="number" min="0" step="0.5"></label></div>
-  <table class="et"><tbody id="eitems"></tbody></table>
- </fieldset>
- <fieldset><legend>Оплата и сроки</legend>
-  <label>График оплаты<select id="pay"><option value="100">100% предоплата</option><option value="50">50 / 50</option><option value="30">30 / 40 / 30</option><option value="st">По этапам</option></select></label>
-  <label id="stBox">Этапы (название; % — по строке)<textarea id="stages" rows="4"></textarea></label>
-  <div class="two"><label>Часов в рабочий день<input id="hpd" type="number" min="1" step="1"></label><label>Срок, рабочих дней<input id="days" type="text" placeholder="авто"></label></div>
-  <small id="daysHint"></small>
- </fieldset>
- <div class="acts">
-  <button id="pdf">Скачать PDF</button><button id="share">Поделиться ссылкой</button><button id="txt">Скачать .txt</button>
-  <input id="link" readonly placeholder="Ссылка появится здесь">
-  <small id="msg"></small>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css"></head><body>
+<header id="top"><div class="logo">КОНВЕРСУС</div>
+ <nav id="steps"><button data-s="1"><i>1</i>Знакомство</button><button data-s="2"><i>2</i>Бриф</button><button data-s="3"><i>3</i>Документы</button></nav>
+ <a id="calcLink" href="#">Калькулятор смет ↗</a></header>
+<div id="banner"></div>
+
+<section id="s1" class="step">
+ <div class="dbar"><span id="cnt"></span><div><button id="edit" class="ghost">Редактировать</button><button id="reset" class="ghost">Сбросить</button><button id="fs">⛶ На весь экран</button></div></div>
+ <div id="stage"><button class="nav prev" id="prev" aria-label="Назад">‹</button><div id="deck"></div><button class="nav next" id="next" aria-label="Вперёд">›</button><div id="fscnt"></div></div>
+ <div id="dots"></div>
+</section>
+
+<section id="s2" class="step">
+ <div class="bwrap"><div class="bmain">
+  <div class="card0"><h3>Клиент и задача</h3>
+   <div class="two"><label>Клиент<input id="client" type="text"></label><label>Проект<input id="proj" type="text"></label></div>
+   <label>Задача клиента<textarea id="task" rows="3"></textarea></label></div>
+  <div class="card0"><h3>Быстрый старт</h3><div id="presets" class="chips"></div></div>
+  <div id="groups"></div>
  </div>
-</aside>
-<main id="pv"></main>
-</div>
+ <aside id="price"><div class="pin">
+  <h3>Стоимость</h3>
+  <label>Ставка за час, ₽<input id="rate" type="number" min="0" step="100"></label>
+  <label>Налог, %<input id="tax" type="number" min="0" step="0.5"></label>
+  <div id="psub"></div>
+  <div class="prow"><span>Часов</span><b id="pH"></b></div><div class="prow"><span>Сумма</span><b id="pS"></b></div><div class="prow"><span id="pTl"></span><b id="pT"></b></div>
+  <div class="prow big"><span>Итого</span><b id="pI"></b></div><p class="note" id="pNote"></p>
+  <button id="toDocs" class="primary">Сформировать КП и ТЗ →</button></div>
+  <div class="pmini"><span>Итого: <b id="mI"></b></span><span id="mH"></span><button id="toDocs2" class="primary">Документы →</button></div>
+ </aside></div>
+</section>
+
+<section id="s3" class="step">
+ <div class="dtabs"><button data-d="kp" class="on">Коммерческое предложение</button><button data-d="tz">Техническое задание</button></div>
+ <div class="dwrap"><aside id="dset">
+  <div id="kpset"><h3>Настройки КП</h3>
+   <div class="two"><label>Дата<input id="date" type="date"></label><label>Действительно до<input id="valid" type="date"></label></div>
+   <label>График оплаты<select id="pay"><option value="100">100% предоплата</option><option value="50">50 / 50</option><option value="30">30 / 40 / 30</option><option value="st">По этапам</option></select></label>
+   <label id="stBox">Этапы (название; % — по строке)<textarea id="stages" rows="4"></textarea></label>
+   <div class="two"><label>Часов в день<input id="hpd" type="number" min="1"></label><label>Срок, раб. дней<input id="days" type="text" placeholder="авто"></label></div><small id="dHint"></small>
+   <h4>Блоки в КП</h4><div id="kpb"></div></div>
+  <div id="tzset"><h3>Настройки ТЗ</h3><p class="note">ТЗ собирается из брифа автоматически, цен в нём нет. Поменяйте галочки на шаге «Бриф», и ТЗ обновится.</p></div>
+  <div class="acts"><button id="pdf" class="primary">Скачать PDF</button><button id="share">Поделиться ссылкой</button><button id="txt">Скачать .txt</button>
+   <input id="link" readonly placeholder="Ссылка появится здесь"><small id="msg"></small></div>
+ </aside>
+ <main id="docs"><div id="doc-kp" class="doc"></div><div id="doc-tz" class="doc"></div></main></div>
+</section>
 <a id="cta" href="https://t.me/bilarius" target="_blank" rel="noopener">Обсудить в Telegram</a>
 <script src="https://ztim2008.github.io/smeta-calculator/data.js"></script>
-<script src="content.js"></script>
-<script src="app.js"></script>
+<script src="content.js"></script><script src="brief-data.js"></script><script src="app.js"></script>
 </body></html>
