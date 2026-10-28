@@ -1,3 +1,3 @@
 // URL веб-приложения Google Apps Script (заканчивается на /exec).
 // Если задан здесь — работает у всех сразу. Поле «⚙ Таблица» на сайте переопределяет его в этом браузере.
-const SHEETS_URL = "";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwYtuMawOCzZ-q6vAVgov-REuaXZHsVepFHcmUT_mKtZefxgpy3ZJfYmboFnHDEe8uW/exec";
