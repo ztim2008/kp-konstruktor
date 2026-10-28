@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Коммерческое предложение — Конверсус</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<div id="app">
+<aside id="ed">
+ <div class="edh"><b>Конструктор КП</b><a href="#" id="back">← Калькулятор смет</a></div>
+ <fieldset><legend>Клиент</legend>
+  <label>Название клиента<input id="client" type="text"></label>
+  <label>Логотип клиента (необязательно)<input id="logo" type="file" accept="image/*"></label>
+  <button class="sm" id="logoX" type="button">Убрать логотип</button>
+  <label>Задача клиента<textarea id="task" rows="4"></textarea></label>
+  <div class="two"><label>Дата КП<input id="date" type="date"></label><label>Действительно до<input id="valid" type="date"></label></div>
+ </fieldset>
+ <fieldset><legend>Блоки</legend><div id="blocks"></div>
+  <div id="painsBox" class="sub"><small>Боли клиента:</small><div id="pains"></div></div>
+ </fieldset>
+ <fieldset><legend>Расчёт</legend>
+  <div class="seg" id="gsel"></div><div class="seg" id="vsel"></div>
+  <label>Название проекта<input id="proj" type="text"></label>
+  <div class="two"><label>Ставка за час, ₽<input id="rate" type="number" min="0" step="100"></label><label>Налог, %<input id="tax" type="number" min="0" step="0.5"></label></div>
+  <table class="et"><tbody id="eitems"></tbody></table>
+ </fieldset>
+ <fieldset><legend>Оплата и сроки</legend>
+  <label>График оплаты<select id="pay"><option value="100">100% предоплата</option><option value="50">50 / 50</option><option value="30">30 / 40 / 30</option><option value="st">По этапам</option></select></label>
+  <label id="stBox">Этапы (название; % — по строке)<textarea id="stages" rows="4"></textarea></label>
+  <div class="two"><label>Часов в рабочий день<input id="hpd" type="number" min="1" step="1"></label><label>Срок, рабочих дней<input id="days" type="text" placeholder="авто"></label></div>
+  <small id="daysHint"></small>
+ </fieldset>
+ <div class="acts">
+  <button id="pdf">Скачать PDF</button><button id="share">Поделиться ссылкой</button><button id="txt">Скачать .txt</button>
+  <input id="link" readonly placeholder="Ссылка появится здесь">
+  <small id="msg"></small>
+ </div>
+</aside>
+<main id="pv"></main>
+</div>
+<a id="cta" href="https://t.me/bilarius" target="_blank" rel="noopener">Обсудить в Telegram</a>
+<script src="https://ztim2008.github.io/smeta-calculator/data.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+</body></html>
