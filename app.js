@@ -1,6 +1,8 @@
 const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const r2=x=>Math.round(x*100)/100,rub=x=>r2(x).toLocaleString("ru-RU")+" ₽",fd=d=>d?d.split("-").reverse().join("."):"";
 const iso=d=>d.toISOString().slice(0,10),plus=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const NOTES={tilda:"В стоимость не входит: покупка домена, хостинг и подписка на Тильду.",cms:"В стоимость не входит: покупка домена, хостинг и платные плагины/лицензии CMS (при необходимости).",code:"В стоимость не входит: покупка домена, хостинг/сервер (VPS) и платные внешние сервисы (при необходимости)."};
+const noteP=()=>NOTES[S.plat]||NOTE;
 const PI=()=>PLATS.findIndex(p=>p[0]==S.plat);
 
 /* ===== slide content with local edits ===== */
@@ -12,13 +14,15 @@ applyEdits();
 
 /* ===== state ===== */
 const BLK=[["team","О команде",1],["why","Почему мы",1],["case1","Кейс: Фабричные бани",1],["case2","Кейс: Спортивный клуб",1],["list","Более 140 проектов",0]];
-const DEFAULT=()=>({client:"",proj:"",task:"",rate:RATE,tax:TAX,plat:"tilda",type:"landing",pages:5,sel:{},hov:{},custom:[],needs:"",wish:[],
+const DEFAULT=()=>({client:"",proj:"",task:"",rate:RATE,tax:TAX,plat:"tilda",type:"landing",pages:5,sel:{},hov:{},custom:[],needs:"",wish:[],risks:"",pnames:"",
  kp:{date:iso(new Date()),valid:plus(14),pay:"50",stages:"",hpd:6,days:"",b:Object.fromEntries(BLK.map(b=>[b[0],!!b[2]]))}});
 let S=DEFAULT();try{const sv=JSON.parse(localStorage.getItem("kv_state")||"null");if(sv)S=Object.assign(DEFAULT(),sv)}catch(e){}
 function preset(p){S.plat=p.plat;S.type=p.type;S.sel={};S.hov={};p.on.forEach(id=>S.sel[id]=true)}
+try{const pp=JSON.parse(localStorage.getItem("kv_presets")||"null");if(Array.isArray(pp)&&pp.length){PRESETS.length=0;pp.forEach(x=>PRESETS.push(x))}}catch(e){}
 if(!Object.keys(S.sel).length&&!S.custom.length)preset(PRESETS[0]);
 let VIEW=null,step=1,doc="kp",banner="";
 const H=location.hash;
+let IDLOAD=null;const hm=H.match(/^#id=([\w-]+)(?:&d=(kp|tz))?/);if(hm){VIEW=hm[2]||"kp";IDLOAD=hm[1]}
 try{if(H.startsWith("#kp=")||H.startsWith("#tz=")){VIEW=H.slice(1,3);S=Object.assign(DEFAULT(),decState(H.slice(4)));}
 else if(H.startsWith("#calc=")){const c=decState(H.slice(6));S.sel={};S.hov={};S.rate=c.rate;S.tax=c.tax;S.proj=c.proj||S.proj;S.client=c.client||S.client;
  S.custom=c.items.filter(i=>i.on).map(i=>({n:i.n,h:+i.h,on:true}));step=3;banner="Загружен расчёт из калькулятора смет: пункты добавлены в «Дополнительно». Можно дополнить бриф галочками.";history.replaceState(null,"",location.pathname)}}catch(e){console.warn(e)}
@@ -27,15 +31,16 @@ const save=()=>{if(!VIEW)localStorage.setItem("kv_state",JSON.stringify(S))};
 /* ===== calculation ===== */
 function itemName(it){return Array.isArray(it.n)?it.n[PI()]:it.n}
 function defH(it){return Array.isArray(it.h)?it.h[PI()]:it.h}
+const pnL=()=>String(S.pnames||"").split("\n").map(x=>x.trim()).filter(Boolean);
 function autoItems(){const a=[],p=PI(),des=ITEMS.some(i=>i.g=="design"&&S.sel[i.id]),N=Math.max(0,+S.pages||0);
  if(S.type=="multi"&&N){if(des)a.push({id:"a_pd",g:"design",n:`Дизайн внутренних страниц (${N} шт.)`,h:N*3,d:`Дизайн ${N} внутренних страниц на основе главной.`,auto:1});
-  a.push({id:"a_pb",g:"plat",n:`Вёрстка внутренних страниц (${N} шт.)`,h:N*[2,3,4][p],d:`Сборка ${N} внутренних страниц (перечень согласуется на этапе структуры).`,auto:1})}
+  a.push({id:"a_pb",g:"plat",n:`Вёрстка внутренних страниц (${N} шт.)`,h:N*[2,3,4][p],d:pnL().length?`Сборка ${N} внутренних страниц: ${pnL().filter(x=>!/^главная$/i.test(x)).join(", ")}.`:`Сборка ${N} внутренних страниц (перечень согласуется на этапе структуры).`,auto:1})}
  if(S.type=="shop"){if(des)a.push({id:"a_sd",g:"design",n:"Дизайн карточки товара и корзины",h:6,d:"Макеты каталога, карточки товара, корзины и оформления заказа.",auto:1});
   a.push({id:"a_sb",g:"plat",n:"Каталог товаров, корзина и оформление заказа",h:[10,16,30][p],d:"Каталог с категориями и фильтрами, карточка товара, корзина, оформление заказа, уведомления о заказах.",auto:1})}
  return a}
 function lines(){const L=[];const all=ITEMS.concat(autoItems());
  all.forEach(it=>{if(!(it.auto||S.sel[it.id]))return;const h=S.hov[it.id]!=null?S.hov[it.id]:defH(it);L.push({id:it.id,g:it.g,n:itemName(it),h:it.client?0:+h||0,d:it.d,client:it.client})});
- S.custom.forEach(c=>{if(c.on&&c.n.trim())L.push({g:"custom",n:c.n,h:+c.h||0,d:"Дополнительная работа по согласованию с заказчиком."})});return L}
+ S.custom.forEach(c=>{if(c.on&&c.n.trim())L.push({g:"custom",n:c.n,h:+c.h||0,d:(c.d||"").trim()||"Дополнительная работа по согласованию с заказчиком."})});return L}
 function totals(L=lines()){const Hh=L.reduce((a,l)=>a+l.h,0),Sm=Hh*S.rate,T=Sm*S.tax/100;return{H:Hh,S:Sm,T,I:Sm+T}}
 const autoDays=c=>Math.max(1,Math.ceil(c.H/(+S.kp.hpd||6))),daysText=c=>(S.kp.days||"").trim()||autoDays(c)+" раб. дн.";
 function sched(){const k=S.kp;if(k.pay=="100")return[["Предоплата 100%",100]];if(k.pay=="50")return[["Предоплата",50],["После сдачи работ",50]];
@@ -76,17 +81,17 @@ function renderBrief(){const p=PI();let h="";
  GROUPS.forEach(([g,gn])=>{h+=`<div class="card0 grp" data-g="${g}"><h3>${gn}<span class="gsum" id="gs_${g}"></span></h3>`;
   if(g=="plat"){h+=`<div class="radios"><small>Платформа</small>${PLATS.map(([k,n])=>`<label class="rad ${S.plat==k?"on":""}"><input type="radio" name="plat" value="${k}" ${S.plat==k?"checked":""}>${n}</label>`).join("")}</div>
    <div class="radios"><small>Тип сайта</small>${TYPES.map(([k,n])=>`<label class="rad ${S.type==k?"on":""}"><input type="radio" name="type" value="${k}" ${S.type==k?"checked":""}>${n}</label>`).join("")}
-   ${S.type=="multi"?`<label class="pages">Внутренних страниц (кроме главной)<input id="pages" type="number" min="0" value="${S.pages}"></label>`:""}</div>`}
+   ${S.type=="multi"?`<label class="pages">Внутренних страниц (кроме главной)<input id="pages" type="number" min="0" value="${S.pages}"></label><label class="pages pn">Названия страниц (по одной в строке)<textarea id="pnames" rows="4" placeholder="Главная\nУслуги\nО компании">${esc(S.pnames||"")}</textarea></label>`:""}</div>`}
   const its=ITEMS.filter(i=>i.g==g).concat(autoItems().filter(i=>i.g==g));
   if(its.length||g=="custom")h+=`<div class="items">`+its.map(it=>{const on=it.auto||S.sel[it.id],hv=S.hov[it.id]!=null?S.hov[it.id]:defH(it);
    return `<div class="it ${on?"":"off"}"><label class="ck"><input type="checkbox" data-id="${it.id}" ${on?"checked":""} ${it.auto?"disabled":""}><span>${esc(itemName(it))}${it.client?' <em class="cp">оплачивает клиент</em>':""}${it.auto?' <em class="cp">авто</em>':""}</span></label>
    ${it.client?'<span class="hz">0 ч</span>':`<span class="hin"><input type="number" min="0" step="0.5" value="${hv}" data-h="${it.id}"> ч</span>`}</div>`}).join("")+
-   (g=="custom"?S.custom.map((c,j)=>`<div class="it ${c.on?"":"off"}"><label class="ck"><input type="checkbox" data-c="${j}" ${c.on?"checked":""}><input class="cn" type="text" value="${esc(c.n)}" data-cn="${j}" placeholder="Название работы"></label><span class="hin"><input type="number" min="0" step="0.5" value="${c.h}" data-ch="${j}"> ч</span><button class="x" data-cx="${j}" title="Удалить">×</button></div>`).join("")+`<button id="addC" class="ghost">+ Добавить строку</button>`:"")+`</div>`;
+   (g=="custom"?S.custom.map((c,j)=>`<div class="it ${c.on?"":"off"}"><label class="ck"><input type="checkbox" data-c="${j}" ${c.on?"checked":""}><input class="cn" type="text" value="${esc(c.n)}" data-cn="${j}" placeholder="Название работы"></label><span class="hin"><input type="number" min="0" step="0.5" value="${c.h}" data-ch="${j}"> ч</span><button class="x" data-cx="${j}" title="Удалить">×</button><textarea class="cd" rows="2" data-cd="${j}" placeholder="Описание для ТЗ (что входит в работу)">${esc(c.d||"")}</textarea></div>`).join("")+`<button id="addC" class="ghost">+ Добавить строку</button>`:"")+`</div>`;
   if(g=="blocks"&&S.type!="landing")h+=`<p class="note">Блоки — для главной страницы.</p>`;
   h+=`</div>`});
  $("groups").innerHTML=h;updPrice()}
 function updPrice(){const L=lines(),c=totals(L);$("pH").textContent=r2(c.H);$("pS").textContent=rub(c.S);$("pTl").textContent="Налог "+S.tax+"%";$("pT").textContent=rub(c.T);$("pI").textContent=$("mI").textContent=rub(c.I);$("mH").textContent=r2(c.H)+" ч";
- $("pNote").textContent=NOTE;const sub={};L.forEach(l=>sub[l.g]=(sub[l.g]||0)+l.h);
+ $("pNote").textContent=noteP();const sub={};L.forEach(l=>sub[l.g]=(sub[l.g]||0)+l.h);
  $("psub").innerHTML=GROUPS.filter(g=>sub[g[0]]).map(([g,n])=>`<div class="prow sm"><span>${n}</span><span>${r2(sub[g])} ч</span></div>`).join("");
  GROUPS.forEach(([g])=>{const e=$("gs_"+g);if(e)e.textContent=sub[g]?r2(sub[g])+" ч · "+rub(sub[g]*S.rate):""});save()}
 function initBrief(){$("presets").innerHTML=PRESETS.map((p,j)=>`<button data-p="${j}">${p.n}</button>`).join("")+`<button data-p="x" class="ghost">Очистить</button>`;
@@ -100,9 +105,9 @@ function initBrief(){$("presets").innerHTML=PRESETS.map((p,j)=>`<button data-p="
   if(d.id){S.sel[d.id]=t.checked;renderBrief();return}
   if(d.c!=null){S.custom[d.c].on=t.checked;t.closest(".it").classList.toggle("off",!t.checked);updPrice()}});
  G.addEventListener("input",e=>{const t=e.target,d=t.dataset;
-  if(d.h){S.hov[d.h]=+t.value||0;updPrice()}else if(d.ch!=null){S.custom[d.ch].h=+t.value||0;updPrice()}else if(d.cn!=null){S.custom[d.cn].n=t.value;updPrice()}
+  if(d.h){S.hov[d.h]=+t.value||0;updPrice()}else if(d.ch!=null){S.custom[d.ch].h=+t.value||0;updPrice()}else if(d.cn!=null){S.custom[d.cn].n=t.value;updPrice()}else if(d.cd!=null){S.custom[d.cd].d=t.value;save()}else if(t.id=="pnames"){S.pnames=t.value;save()}
   else if(t.id=="pages"){S.pages=+t.value||0;delete S.hov.a_pd;delete S.hov.a_pb;clearTimeout(window._pt);window._pt=setTimeout(()=>{renderBrief();const p=$("pages");p.focus();p.setSelectionRange&&0},600)}});
- G.addEventListener("click",e=>{const t=e.target;if(t.id=="addC"){S.custom.push({n:"",h:1,on:true});renderBrief();const ins=G.querySelectorAll(".cn");ins[ins.length-1].focus()}else if(t.dataset.cx!=null){S.custom.splice(+t.dataset.cx,1);renderBrief()}});
+ G.addEventListener("click",e=>{const t=e.target;if(t.id=="addC"){S.custom.push({n:"",h:1,on:true,d:""});renderBrief();const ins=G.querySelectorAll(".cn");ins[ins.length-1].focus()}else if(t.dataset.cx!=null){S.custom.splice(+t.dataset.cx,1);renderBrief()}});
  $("toDocs").onclick=$("toDocs2").onclick=()=>setStep(4);renderBrief()}
 function renderBriefSums(){}
 
@@ -119,7 +124,7 @@ function renderKP(){const L=lines(),c=totals(L),b=S.kp.b,o=[];let n=0;const N=()
  {const w=wishL();if(S.needs.trim()||w.length)o.push(sec(N(),"Ваша задача","Что вы хотите получить",(S.needs.trim()?`<p class="lead">${esc(S.needs.trim().length>600?S.needs.trim().slice(0,600)+"…":S.needs.trim()).replace(/\n/g,"<br>")}</p>`:"")+(w.length?`<ul>${w.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"")))}
  o.push(sec(N(),"Что сделаем","Состав работ",`<div class="tags"><span>${platN()}</span><span>${typeN()}</span></div><div class="scope">${grpL(L).map(([g,a])=>`<div class="card"><h3>${g}</h3><ul>${a.map(l=>`<li>${esc(l.n)}${l.client?" <em>— оплачивает клиент</em>":""}</li>`).join("")}</ul></div>`).join("")}</div>`));
  o.push(sec(N(),"Расчёт","Стоимость работ",`<table class="t calc"><thead><tr><th>Работа</th><th class="r">Часы</th><th class="r">Стоимость</th></tr></thead><tbody>${grpL(L).map(([g,a])=>`<tr class="gh"><td colspan="3">${g}</td></tr>`+a.map(l=>`<tr><td>${esc(l.n)}${l.client?" <em>(оплачивает клиент)</em>":""}</td><td class="r">${l.client?"—":r2(l.h)}</td><td class="r">${l.client?"—":rub(l.h*S.rate)}</td></tr>`).join("")).join("")}</tbody></table>
-  <div class="tots"><div><span>Ставка за час</span><b>${rub(S.rate)}</b></div><div><span>Часов всего</span><b>${r2(c.H)}</b></div><div><span>Предварительная стоимость</span><b>${rub(c.S)}</b></div><div><span>Налог ${S.tax}%</span><b>${rub(c.T)}</b></div><div class="big"><span>Итого</span><b>${rub(c.I)}</b></div></div><p class="note">${NOTE}</p>`,"flow"));
+  <div class="tots"><div><span>Ставка за час</span><b>${rub(S.rate)}</b></div><div><span>Часов всего</span><b>${r2(c.H)}</b></div><div><span>Предварительная стоимость</span><b>${rub(c.S)}</b></div><div><span>Налог ${S.tax}%</span><b>${rub(c.T)}</b></div><div class="big"><span>Итого</span><b>${rub(c.I)}</b></div></div><p class="note">${noteP()}</p>`,"flow"));
  const sc=sched(),sp=sc.reduce((a,x)=>a+x[1],0);
  o.push(sec(N(),"Условия","Оплата и сроки",`<table class="t"><thead><tr><th>Платёж</th><th class="r">Доля</th><th class="r">Сумма</th></tr></thead><tbody>${sc.map(([t,p])=>`<tr><td>${esc(t)}</td><td class="r">${p}%</td><td class="r">${rub(c.I*p/100)}</td></tr>`).join("")}</tbody></table>${Math.abs(sp-100)>.01?`<p class="warn">Сумма долей: ${sp}% (должно быть 100%)</p>`:""}
   <div class="tots"><div class="big"><span>Ориентировочный срок</span><b>${esc(daysText(c))}</b></div>${S.kp.valid?`<div><span>Предложение действительно до</span><b>${fd(S.kp.valid)}</b></div>`:""}</div>`));
@@ -137,6 +142,7 @@ function tzData(){const L=lines(),has=id=>L.some(l=>l.id==id),T=[];
  T.push(["Платформа и тип сайта",[["Платформа",platN()+". "+PLAT_D[S.plat]],["Тип сайта",typeN()+". "+TYPE_D[S.type]]],"kv"]);
  const bl=L.filter(l=>l.g=="blocks");const st=[];if(bl.length)st.push([S.type=="landing"?"Главная страница (лендинг) — блоки по порядку":"Главная страница — блоки по порядку",bl.map(l=>[l.n,l.d])]);
  L.filter(l=>l.id=="a_pb"||l.id=="a_sb").forEach(l=>st.push([l.n,[["Состав",l.d]]]));
+ if(pnL().length)st.unshift(["Страницы сайта",pnL().map(x=>[x,/^главная$/i.test(x)?"Главная страница":"Внутренняя страница"])]);
  if(st.length)T.push(["Структура сайта",st,"struct"]);
  const sect=(t,g,extra=[])=>{const a=L.filter(l=>g.includes(l.g)&&!l.auto&&l.id!="domain"&&l.id!="hosting").map(l=>[l.n,l.d]).concat(extra).filter((x,i,arr)=>arr.findIndex(y=>y[0]==x[0])==i);if(a.length)T.push([t,a,"kv"])};
  {const w=wishL();if(S.needs.trim()||w.length){const a=[];if(S.needs.trim())a.push(["Что нужно клиенту",S.needs.trim()]);w.forEach((x,j)=>a.push(["Пожелание "+(j+1),x]));T.push(["Пожелания клиента",a,"kv"])}}
@@ -152,7 +158,8 @@ function tzData(){const L=lines(),has=id=>L.some(l=>l.id==id),T=[];
  stg.push("Разработка: вёрстка, блоки и функции на выбранной платформе");if(has("content"))stg.push("Наполнение контентом");stg.push("Тестирование и запуск: проверка, публикация, подключение домена");
  if(has("seo")||has("metrika")||has("direct"))stg.push("SEO, аналитика"+(has("direct")?" и запуск рекламы":""));T.push(["Этапы работ",stg,"ol"]);
  T.push(["Критерии приёмки",["Все блоки и страницы из ТЗ реализованы и соответствуют согласованным макетам/структуре","Сайт корректно отображается на телефоне, планшете и десктопе","Формы отправляют заявки, уведомления приходят по указанным каналам","Сайт опубликован на домене заказчика и открывается по HTTPS"].concat(has("metrika")?["Метрика собирает данные, цели на заявки срабатывают"]:[],has("cookie")?["Есть баннер cookie, политика конфиденциальности и согласия в формах"]:[],has("f_pay")?["Тестовая оплата проходит успешно"]:[],["Заказчику переданы доступы к сайту и инструкции"]),"ul"]);
- T.push(["Не входит в работы",[NOTE.replace("В стоимость не входит: ","")+" Оплачиваются заказчиком отдельно."],"p"]);return T}
+ if((S.risks||"").trim())T.push(["Примечания и риски",[S.risks.trim()],"p"]);
+ T.push(["Не входит в работы",[noteP().replace("В стоимость не входит: ","")+" Оплачиваются заказчиком отдельно."],"p"]);return T}
 function renderTZ(){const T=tzData(),c=totals(),o=[cover("tz",c)];let body="";
  T.forEach(([t,a,k],i)=>{let h=`<div class="tzs"><h3><b>${i+1}.</b> ${t}</h3>`;
   if(k=="kv")h+=`<table class="t kv"><tbody>${a.map(([x,y])=>`<tr><td>${esc(x)}</td><td>${esc(y)}</td></tr>`).join("")}</tbody></table>`;
@@ -167,7 +174,7 @@ function txtKP(){const L=lines(),c=totals(L),D="-".repeat(64),pad=(a,n)=>a.lengt
  {const w=wishL();if(S.needs.trim()||w.length){s+=`\nПожелания клиента:\n`+(S.needs.trim()?S.needs.trim()+"\n":"")+w.map(x=>"- "+x+"\n").join("")}}
  s+=`\nПлатформа: ${platN()}\nТип сайта: ${typeN()}\n\n${D}\nСТОИМОСТЬ РАБОТ (ставка ${rub(S.rate)} / час)\n${D}\n`;
  grpL(L).forEach(([g,a])=>{s+=`\n${g.toUpperCase()}\n`;a.forEach(l=>{const t="- "+l.n+(l.client?" (оплачивает клиент)":"");s+=(t.length>45?t+"\n"+" ".repeat(46):pad(t,46))+(l.client?"—":pad(String(r2(l.h)),7)+rub(l.h*S.rate))+"\n"})});
- s+=`\n${D}\nЧасов всего:               ${r2(c.H)}\nПредварительная стоимость: ${rub(c.S)}\nНалог ${S.tax}%:                  ${rub(c.T)}\nИТОГО:                     ${rub(c.I)}\n\n${NOTE}\n\n${D}\nГРАФИК ОПЛАТЫ\n`;
+ s+=`\n${D}\nЧасов всего:               ${r2(c.H)}\nПредварительная стоимость: ${rub(c.S)}\nНалог ${S.tax}%:                  ${rub(c.T)}\nИТОГО:                     ${rub(c.I)}\n\n${noteP()}\n\n${D}\nГРАФИК ОПЛАТЫ\n`;
  sched().forEach(([t,p])=>s+=`- ${t}: ${p}% — ${rub(c.I*p/100)}\n`);s+=`Ориентировочный срок: ${daysText(c)}\n\n${D}\nКонтакты: Telegram ${C.contacts.tg} (${C.contacts.tgUrl}), ${C.contacts.phone}, ${C.contacts.mail}, http://leadweb.site\n`;return s}
 function txtTZ(){const D="-".repeat(64);let s=`ТЕХНИЧЕСКОЕ ЗАДАНИЕ — Lead-web (http://leadweb.site)\n${D}\n`;
  tzData().forEach(([t,a,k],i)=>{s+=`\n${i+1}. ${t.toUpperCase()}\n`;if(k=="kv")a.forEach(([x,y])=>s+=`- ${x}: ${y}\n`);else if(k=="struct")a.forEach(([n,r])=>{s+=`${n}:\n`;r.forEach(([x,y],j)=>s+=`  ${j+1}. ${x} — ${y}\n`)});else if(k=="p")a.forEach(x=>s+=x+"\n");else a.forEach((x,j)=>s+=(k=="ol"?(j+1)+". ":"- ")+x+"\n")});
@@ -177,8 +184,32 @@ function initDocs(){const k=S.kp;["date","valid","stages","days"].forEach(x=>{$(
  $("pay").value=k.pay;$("pay").onchange=()=>{k.pay=$("pay").value;if(k.pay=="st"&&!k.stages.trim()){k.stages="Предоплата; 30\nДизайн / прототип; 30\nРазработка; 30\nЗапуск; 10";$("stages").value=k.stages}render()};
  $("kpb").innerHTML=BLK.map(([x,n])=>`<label class="ck"><input type="checkbox" data-b="${x}" ${k.b[x]?"checked":""}><span>${n}</span></label>`).join("");$("kpb").onchange=e=>{k.b[e.target.dataset.b]=e.target.checked;render()};
  document.querySelector(".dtabs").onclick=e=>{const d=e.target.dataset.d;if(d){doc=d;render()}};
- $("pdf").onclick=()=>window.print();$("txt").onclick=()=>dl((doc=="kp"?"kp-":"tz-")+(k.date||"")+".txt",doc=="kp"?txtKP():txtTZ());
- $("share").onclick=()=>{const u=location.origin+location.pathname+"#"+doc+"="+encState(S);$("link").value=u;$("link").select();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>$("msg").textContent="Ссылка на "+(doc=="kp"?"КП":"ТЗ")+" скопирована.",()=>$("msg").textContent="Скопируйте ссылку из поля.")}}
+ $("risks").value=S.risks||"";$("risks").oninput=()=>{S.risks=$("risks").value;render()};$("pdf").onclick=()=>window.print();$("txt").onclick=()=>dl((doc=="kp"?"kp-":"tz-")+(k.date||"")+".txt",doc=="kp"?txtKP():txtTZ());
+ $("share").onclick=()=>{const u=shareUrl(doc);$("link").value=u;$("link").select();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>$("msg").textContent="Ссылка на "+(doc=="kp"?"КП":"ТЗ")+" скопирована.",()=>$("msg").textContent="Скопируйте ссылку из поля.")}}
+function shareUrl(d){const base=location.origin+location.pathname;if(S.mid&&localStorage.getItem("kv_saved")==encState(S))return base+"#id="+S.mid+"&d="+d;return base+"#"+d+"="+encState(S)}
+function jdl(name,o){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:"application/json"}));a.download=name;a.click()}
+function initIO(){let mode="";const f=$("impF"),num=x=>typeof x=="number"&&isFinite(x)&&x>=0;
+ $("expS").onclick=()=>jdl("leadweb-settings-"+iso(new Date())+".json",{kind:"leadweb-settings",v:1,rate:S.rate,tax:S.tax,hov:S.hov,custom:S.custom,presets:PRESETS,slideEdits:EDITS});
+ $("expM").onclick=()=>jdl("leadweb-meeting-"+(S.client||"client").replace(/[^\wа-яё-]+/gi,"_")+"-"+(S.kp.date||"")+".json",{kind:"leadweb-meeting",v:1,state:S});
+ $("impS").onclick=()=>{mode="s";f.value="";f.click()};$("impM").onclick=()=>{mode="m";f.value="";f.click()};
+ f.onchange=async()=>{const file=f.files[0];if(!file)return;let o;try{o=JSON.parse(await file.text())}catch(e){alert("Файл не является корректным JSON.");return}
+  try{if(mode=="s"){if(o.kind!="leadweb-settings")throw new Error("это не файл настроек Lead-web");
+    if(o.rate!=null&&!num(o.rate))throw new Error("ставка должна быть числом");if(o.tax!=null&&(!num(o.tax)||o.tax>100))throw new Error("налог 0–100");
+    if(o.hov&&(typeof o.hov!="object"||Object.values(o.hov).some(v=>!num(v))))throw new Error("часы по пунктам должны быть числами");
+    if(o.custom&&(!Array.isArray(o.custom)||o.custom.some(c=>typeof c!="object"||typeof c.n!="string"||!num(+c.h))))throw new Error("неверные свои строки");
+    if(o.presets&&(!Array.isArray(o.presets)||o.presets.some(p=>!p||typeof p.n!="string"||!Array.isArray(p.on))))throw new Error("неверные пресеты");
+    if(o.slideEdits&&typeof o.slideEdits!="object")throw new Error("неверные правки слайдов");
+    const parts=[o.rate!=null&&"ставка "+o.rate+" ₽",o.tax!=null&&"налог "+o.tax+"%",o.hov&&Object.keys(o.hov).length+" правок часов",o.custom&&o.custom.length+" своих строк",o.presets&&o.presets.length+" пресетов",o.slideEdits&&Object.keys(o.slideEdits).length+" правок слайдов"].filter(Boolean);
+    if(!confirm("Импортировать настройки?\n"+parts.join(", ")+"\nТекущие значения будут заменены."))return;
+    if(o.rate!=null)S.rate=o.rate;if(o.tax!=null)S.tax=o.tax;if(o.hov)S.hov=o.hov;if(o.custom)S.custom=o.custom.map(c=>({n:c.n,h:+c.h,on:c.on!==false,d:c.d||""}));
+    if(o.presets){localStorage.setItem("kv_presets",JSON.stringify(o.presets));PRESETS.length=0;o.presets.forEach(x=>PRESETS.push(x))}
+    if(o.slideEdits){EDITS=o.slideEdits;localStorage.setItem("kv_slide_edits",JSON.stringify(EDITS))}
+    save();location.reload()}
+   else{if(o.kind!="leadweb-meeting"||!o.state||typeof o.state!="object")throw new Error("это не файл встречи Lead-web");const st=o.state;
+    if(st.sel&&typeof st.sel!="object"||st.custom&&!Array.isArray(st.custom)||st.rate!=null&&!num(st.rate))throw new Error("повреждённые данные встречи");
+    if(!confirm("Открыть встречу «"+(st.client||"без клиента")+" — "+(st.proj||"")+"»?\nТекущая встреча в этом браузере будет заменена."))return;
+    S=Object.assign(DEFAULT(),st);S.kp=Object.assign(DEFAULT().kp,st.kp||{});save();location.reload()}}
+  catch(e){alert("Импорт отменён: "+e.message)}}}
 function render(){if(VIEW||step==4){renderKP();renderTZ()}
  document.body.dataset.doc=doc;document.querySelectorAll(".dtabs button").forEach(b=>b.classList.toggle("on",b.dataset.d==doc));
  if(!VIEW){$("stBox").style.display=S.kp.pay=="st"?"":"none";$("kpset").style.display=doc=="kp"?"":"none";$("tzset").style.display=doc=="tz"?"":"none";$("dHint").textContent="Авто: "+autoDays(totals())+" раб. дн. ("+r2(totals().H)+" ч ÷ "+(S.kp.hpd||6)+" ч/день)";save()}
@@ -194,7 +225,11 @@ function initIntro(){const m=v=>{$("gwrap").style.display=v?"":"none";$("cwrap")
  $("modeG").onclick=()=>m(true);$("modeC").onclick=()=>m(false);m(localStorage.getItem("kv_deck")!="c")}
 function setStep(n){step=n;document.body.dataset.step=n;document.querySelectorAll("#steps button").forEach(b=>b.classList.toggle("on",+b.dataset.s==n));if(n==3)renderBrief();if(n==2)renderW();render();window.scrollTo(0,0)}
 
-if(VIEW){doc=VIEW;document.body.classList.add("client");document.body.dataset.step=4;render()}
+if(VIEW){doc=VIEW;document.body.classList.add("client");document.body.dataset.step=4;
+ if(IDLOAD){$("doc-"+doc).innerHTML='<section class="pg"><p class="lead">Загружаю документ…</p></section>';const u=(localStorage.getItem("kv_sheets_url")||(typeof SHEETS_URL!=="undefined"?SHEETS_URL:"")).trim();
+  fetch(u+(u.includes("?")?"&":"?")+"id="+encodeURIComponent(IDLOAD)).then(r=>r.json()).then(j=>{if(!j.ok)throw new Error(j.error||"не найдено");S=Object.assign(DEFAULT(),typeof j.state=="string"?JSON.parse(j.state):j.state);render();document.body.dataset.ready=1})
+  .catch(e=>{$("doc-"+doc).innerHTML=`<section class="pg"><p class="lead">Не удалось загрузить документ: ${esc(e.message)}</p></section>`})}
+ else{render();document.body.dataset.ready=1}}
 else{$("calcLink").href=CALC_URL;$("steps").onclick=e=>{const b=e.target.closest("button");if(b)setStep(+b.dataset.s)};
  if(banner){$("banner").textContent=banner;$("banner").style.display="block"}
- initDeck();initIntro();initW();initBrief();initDocs();setStep(step)}
+ initDeck();initIntro();initW();initBrief();initDocs();initIO();setStep(step)}

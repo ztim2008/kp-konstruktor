@@ -13,7 +13,7 @@ function row(){if(!S.mid)S.mid=newId();const c=totals(),base=location.origin+loc
 async function saveSheet(){const u=url();if(!u){m(NOURL);openSet();return}
  m("Сохраняю в таблицу…");
  try{const r=await fetch(u,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(row())});const j=await r.json();
-  if(!j.ok)throw new Error(j.error||"ошибка");save();m((j.updated?"Обновлено":"Сохранено")+" в таблице (строка "+j.row+", ID "+j.id+").")}
+  if(!j.ok)throw new Error(j.error||"ошибка");save();localStorage.setItem("kv_saved",encState(S));$("link").value=shareUrl(doc);m((j.updated?"Обновлено":"Сохранено")+" в таблице (строка "+j.row+", ID "+j.id+").")}
  catch(e){m("Не удалось сохранить: "+e.message+". Проверьте URL и что доступ к веб-приложению — «Все».")}}
 async function openSheet(){const u=url(),box=$("shList");box.style.display="block";
  if(!u){box.innerHTML=`<p class="shw">${NOURL}</p>`;return}

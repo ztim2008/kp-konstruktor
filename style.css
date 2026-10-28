@@ -144,3 +144,7 @@ body.client #cta{display:block;position:fixed;right:20px;bottom:20px;background:
 .shi{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--l);border-radius:0;background:#fff;padding:8px 10px;font-family:inherit;font-size:14px;cursor:pointer}.shi:hover{background:#e8f7ef}.shi small{display:block;color:var(--m);font-size:12px}
 #shSet{display:none;position:fixed;inset:0;background:#0008;z-index:99;align-items:center;justify-content:center}.shbox{background:#fff;padding:22px;border-radius:12px;width:min(520px,92vw)}.shbox input{width:100%;margin:8px 0 12px;padding:9px;box-sizing:border-box}
 @media print{.shrow,#shList,#shSet,#shState{display:none!important}}
+.it{flex-wrap:wrap}.it .cd{flex-basis:100%;margin:2px 0 4px 26px;padding:6px 8px;font:inherit;font-size:13px;border:1px solid #e3e0da;border-radius:6px;resize:vertical}
+.pages.pn{display:flex;flex-direction:column;gap:4px;margin-top:8px}.pages.pn textarea{padding:6px 8px;font:inherit;font-size:13px;border:1px solid #e3e0da;border-radius:6px}
+#tzset textarea{width:100%;padding:8px;font:inherit;font-size:13px;margin-top:4px}.shrow.io button{font-size:12.5px}
+@media print{.shrow.io,#impF,#link,#msg{display:none!important}body.client #s4{padding:0}}
