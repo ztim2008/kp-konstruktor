@@ -5,17 +5,27 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css"></head><body>
 <header id="top"><div class="logo">КОНВЕРСУС</div>
- <nav id="steps"><button data-s="1"><i>1</i>Знакомство</button><button data-s="2"><i>2</i>Бриф</button><button data-s="3"><i>3</i>Документы</button></nav>
+ <nav id="steps"><button data-s="1"><i>1</i>Знакомство</button><button data-s="2"><i>2</i>Сбор данных</button><button data-s="3"><i>3</i>Бриф</button><button data-s="4"><i>4</i>Документы</button></nav>
  <a id="calcLink" href="#">Калькулятор смет ↗</a></header>
 <div id="banner"></div>
 
 <section id="s1" class="step">
+ <div class="dbar"><span class="gtitle">Презентация «Конверсус»</span><div><button id="modeG" class="ghost on">Google Slides</button><button id="modeC" class="ghost">Презентация в коде</button><a id="gOpen" class="ghost btnl" href="https://docs.google.com/presentation/d/1gDXRPZGJ1zppSouaigRpbBn04HPZxX6XxRfNEFXlVFs/edit" target="_blank" rel="noopener">Открыть в Google Slides ↗</a></div></div>
+ <div id="gwrap"><div class="g169"><iframe id="gframe" src="https://docs.google.com/presentation/d/1gDXRPZGJ1zppSouaigRpbBn04HPZxX6XxRfNEFXlVFs/embed?start=false&loop=false&delayms=60000" frameborder="0" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" loading="lazy"></iframe></div></div>
+ <div id="cwrap" style="display:none">
  <div class="dbar"><span id="cnt"></span><div><button id="edit" class="ghost">Редактировать</button><button id="reset" class="ghost">Сбросить</button><button id="fs">⛶ На весь экран</button></div></div>
  <div id="stage"><button class="nav prev" id="prev" aria-label="Назад">‹</button><div id="deck"></div><button class="nav next" id="next" aria-label="Вперёд">›</button><div id="fscnt"></div></div>
- <div id="dots"></div>
+ <div id="dots"></div></div>
 </section>
 
-<section id="s2" class="step">
+<section id="s2" class="step"><div class="card0 sdw">
+ <h3>Сбор данных для разработки</h3><p class="note">Первый разговор: что вообще нужно клиенту. Без цен и часов — всё попадёт в ТЗ («Пожелания клиента») и кратко в КП.</p>
+ <label>Что нужно клиенту<textarea id="needs" rows="9" placeholder="Свободные заметки: бизнес, аудитория, цели, примеры сайтов, сроки, бюджет…"></textarea></label>
+ <h4>Пожелания по пунктам</h4><div id="wl"></div><button id="addW" class="ghost">+ Добавить строку</button>
+ <div class="acts2"><button id="toBrief" class="primary">Перейти к брифу →</button></div>
+</div></section>
+
+<section id="s3" class="step">
  <div class="bwrap"><div class="bmain">
   <div class="card0"><h3>Клиент и задача</h3>
    <div class="two"><label>Клиент<input id="client" type="text"></label><label>Проект<input id="proj" type="text"></label></div>
@@ -35,7 +45,7 @@
  </aside></div>
 </section>
 
-<section id="s3" class="step">
+<section id="s4" class="step">
  <div class="dtabs"><button data-d="kp" class="on">Коммерческое предложение</button><button data-d="tz">Техническое задание</button></div>
  <div class="dwrap"><aside id="dset">
   <div id="kpset"><h3>Настройки КП</h3>

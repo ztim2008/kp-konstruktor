@@ -12,7 +12,7 @@ applyEdits();
 
 /* ===== state ===== */
 const BLK=[["team","О команде",1],["why","Почему мы",1],["case1","Кейс: Фабричные бани",1],["case2","Кейс: Спортивный клуб",1],["list","Более 140 проектов",0]];
-const DEFAULT=()=>({client:"",proj:"",task:"",rate:RATE,tax:TAX,plat:"tilda",type:"landing",pages:5,sel:{},hov:{},custom:[],
+const DEFAULT=()=>({client:"",proj:"",task:"",rate:RATE,tax:TAX,plat:"tilda",type:"landing",pages:5,sel:{},hov:{},custom:[],needs:"",wish:[],
  kp:{date:iso(new Date()),valid:plus(14),pay:"50",stages:"",hpd:6,days:"",b:Object.fromEntries(BLK.map(b=>[b[0],!!b[2]]))}});
 let S=DEFAULT();try{const sv=JSON.parse(localStorage.getItem("kv_state")||"null");if(sv)S=Object.assign(DEFAULT(),sv)}catch(e){}
 function preset(p){S.plat=p.plat;S.type=p.type;S.sel={};S.hov={};p.on.forEach(id=>S.sel[id]=true)}
@@ -21,7 +21,7 @@ let VIEW=null,step=1,doc="kp",banner="";
 const H=location.hash;
 try{if(H.startsWith("#kp=")||H.startsWith("#tz=")){VIEW=H.slice(1,3);S=Object.assign(DEFAULT(),decState(H.slice(4)));}
 else if(H.startsWith("#calc=")){const c=decState(H.slice(6));S.sel={};S.hov={};S.rate=c.rate;S.tax=c.tax;S.proj=c.proj||S.proj;S.client=c.client||S.client;
- S.custom=c.items.filter(i=>i.on).map(i=>({n:i.n,h:+i.h,on:true}));step=2;banner="Загружен расчёт из калькулятора смет: пункты добавлены в «Дополнительно». Можно дополнить бриф галочками.";history.replaceState(null,"",location.pathname)}}catch(e){console.warn(e)}
+ S.custom=c.items.filter(i=>i.on).map(i=>({n:i.n,h:+i.h,on:true}));step=3;banner="Загружен расчёт из калькулятора смет: пункты добавлены в «Дополнительно». Можно дополнить бриф галочками.";history.replaceState(null,"",location.pathname)}}catch(e){console.warn(e)}
 const save=()=>{if(!VIEW)localStorage.setItem("kv_state",JSON.stringify(S))};
 
 /* ===== calculation ===== */
@@ -66,7 +66,7 @@ function initDeck(){renderDeck();
  $("reset").onclick=()=>{if(!confirm("Сбросить все правки текстов слайдов?"))return;EDITS={};localStorage.removeItem("kv_slide_edits");applyEdits();renderDeck();render()};
  $("deck").addEventListener("input",e=>{const p=e.target.closest("[data-e]");if(!p)return;const v=p.textContent;EDITS[p.dataset.e]=v;setP(C,p.dataset.e,v);localStorage.setItem("kv_slide_edits",JSON.stringify(EDITS))});
  $("fs").onclick=()=>{const st=$("stage");document.fullscreenElement?document.exitFullscreen():(st.requestFullscreen||st.webkitRequestFullscreen).call(st)};
- document.addEventListener("keydown",e=>{if(step!=1||editing&&e.target.isContentEditable)return;if(["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName))return;
+ document.addEventListener("keydown",e=>{if(step!=1||$("cwrap").style.display=="none"||editing&&e.target.isContentEditable)return;if(["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName))return;
   if(["ArrowRight","PageDown"," "].includes(e.key)){e.preventDefault();go(cur+1)}else if(["ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();go(cur-1)}else if(e.key=="Home")go(0);else if(e.key=="End")go(NS-1);else if(e.key=="f")$("fs").click()});
  let tx=null,ty=null;$("stage").addEventListener("touchstart",e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
  $("stage").addEventListener("touchend",e=>{if(tx==null||editing)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(cur+(dx<0?1:-1));tx=null},{passive:true})}
@@ -103,7 +103,7 @@ function initBrief(){$("presets").innerHTML=PRESETS.map((p,j)=>`<button data-p="
   if(d.h){S.hov[d.h]=+t.value||0;updPrice()}else if(d.ch!=null){S.custom[d.ch].h=+t.value||0;updPrice()}else if(d.cn!=null){S.custom[d.cn].n=t.value;updPrice()}
   else if(t.id=="pages"){S.pages=+t.value||0;delete S.hov.a_pd;delete S.hov.a_pb;clearTimeout(window._pt);window._pt=setTimeout(()=>{renderBrief();const p=$("pages");p.focus();p.setSelectionRange&&0},600)}});
  G.addEventListener("click",e=>{const t=e.target;if(t.id=="addC"){S.custom.push({n:"",h:1,on:true});renderBrief();const ins=G.querySelectorAll(".cn");ins[ins.length-1].focus()}else if(t.dataset.cx!=null){S.custom.splice(+t.dataset.cx,1);renderBrief()}});
- $("toDocs").onclick=$("toDocs2").onclick=()=>setStep(3);renderBrief()}
+ $("toDocs").onclick=$("toDocs2").onclick=()=>setStep(4);renderBrief()}
 function renderBriefSums(){}
 
 /* ===== STEP 3: documents ===== */
@@ -116,6 +116,7 @@ function cover(kind,c){return `<section class="pg cover"><div class="ctop"><div 
  <div class="cbot"><div><small>Дата</small>${fd(S.kp.date)}</div>${kind=="kp"&&S.kp.valid?`<div><small>Предложение действительно до</small>${fd(S.kp.valid)}</div><div><small>Стоимость</small><b class="acc">${rub(c.I)}</b></div>`:`<div><small>Платформа</small>${platN()}</div><div><small>Тип сайта</small>${typeN()}</div>`}</div></section>`}
 function renderKP(){const L=lines(),c=totals(L),b=S.kp.b,o=[];let n=0;const N=()=>String(++n).padStart(2,"0");
  o.push(cover("kp",c));
+ {const w=wishL();if(S.needs.trim()||w.length)o.push(sec(N(),"Ваша задача","Что вы хотите получить",(S.needs.trim()?`<p class="lead">${esc(S.needs.trim().length>600?S.needs.trim().slice(0,600)+"…":S.needs.trim()).replace(/\n/g,"<br>")}</p>`:"")+(w.length?`<ul>${w.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"")))}
  o.push(sec(N(),"Что сделаем","Состав работ",`<div class="tags"><span>${platN()}</span><span>${typeN()}</span></div><div class="scope">${grpL(L).map(([g,a])=>`<div class="card"><h3>${g}</h3><ul>${a.map(l=>`<li>${esc(l.n)}${l.client?" <em>— оплачивает клиент</em>":""}</li>`).join("")}</ul></div>`).join("")}</div>`));
  o.push(sec(N(),"Расчёт","Стоимость работ",`<table class="t calc"><thead><tr><th>Работа</th><th class="r">Часы</th><th class="r">Стоимость</th></tr></thead><tbody>${grpL(L).map(([g,a])=>`<tr class="gh"><td colspan="3">${g}</td></tr>`+a.map(l=>`<tr><td>${esc(l.n)}${l.client?" <em>(оплачивает клиент)</em>":""}</td><td class="r">${l.client?"—":r2(l.h)}</td><td class="r">${l.client?"—":rub(l.h*S.rate)}</td></tr>`).join("")).join("")}</tbody></table>
   <div class="tots"><div><span>Ставка за час</span><b>${rub(S.rate)}</b></div><div><span>Часов всего</span><b>${r2(c.H)}</b></div><div><span>Предварительная стоимость</span><b>${rub(c.S)}</b></div><div><span>Налог ${S.tax}%</span><b>${rub(c.T)}</b></div><div class="big"><span>Итого</span><b>${rub(c.I)}</b></div></div><p class="note">${NOTE}</p>`,"flow"));
@@ -138,6 +139,7 @@ function tzData(){const L=lines(),has=id=>L.some(l=>l.id==id),T=[];
  L.filter(l=>l.id=="a_pb"||l.id=="a_sb").forEach(l=>st.push([l.n,[["Состав",l.d]]]));
  if(st.length)T.push(["Структура сайта",st,"struct"]);
  const sect=(t,g,extra=[])=>{const a=L.filter(l=>g.includes(l.g)&&!l.auto&&l.id!="domain"&&l.id!="hosting").map(l=>[l.n,l.d]).concat(extra);if(a.length)T.push([t,a,"kv"])};
+ {const w=wishL();if(S.needs.trim()||w.length){const a=[];if(S.needs.trim())a.push(["Что нужно клиенту",S.needs.trim()]);w.forEach((x,j)=>a.push(["Пожелание "+(j+1),x]));T.push(["Пожелания клиента",a,"kv"])}}
  sect("Подготовка",["prep"]);sect("Дизайн",["design"],L.filter(l=>l.id=="a_pd"||l.id=="a_sd").map(l=>[l.n,l.d]));
  sect("Вёрстка и технические требования",["plat"],[["Общие требования","Валидная вёрстка, HTTPS, корректная работа форм, быстрая загрузка, отображение в актуальных версиях браузеров."]]);
  sect("Функции и интеграции",["func"]);sect("SEO, аналитика и юридические требования",["launch"]);sect("Дополнительные работы",["custom"]);
@@ -162,6 +164,7 @@ function renderTZ(){const T=tzData(),c=totals(),o=[cover("tz",c)];let body="";
  $("doc-tz").innerHTML=o.join("")}
 function txtKP(){const L=lines(),c=totals(L),D="-".repeat(64),pad=(a,n)=>a.length>=n?a:a+" ".repeat(n-a.length);
  let s=`КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ — КОНВЕРСУС\n${D}\n`+(S.client?`Клиент: ${S.client}\n`:"")+`Проект: ${S.proj||"—"}\nДата: ${fd(S.kp.date)}\n`+(S.kp.valid?`Действительно до: ${fd(S.kp.valid)}\n`:"")+(S.task.trim()?`\nЗадача клиента:\n${S.task.trim()}\n`:"");
+ {const w=wishL();if(S.needs.trim()||w.length){s+=`\nПожелания клиента:\n`+(S.needs.trim()?S.needs.trim()+"\n":"")+w.map(x=>"- "+x+"\n").join("")}}
  s+=`\nПлатформа: ${platN()}\nТип сайта: ${typeN()}\n\n${D}\nСТОИМОСТЬ РАБОТ (ставка ${rub(S.rate)} / час)\n${D}\n`;
  grpL(L).forEach(([g,a])=>{s+=`\n${g.toUpperCase()}\n`;a.forEach(l=>{const t="- "+l.n+(l.client?" (оплачивает клиент)":"");s+=(t.length>45?t+"\n"+" ".repeat(46):pad(t,46))+(l.client?"—":pad(String(r2(l.h)),7)+rub(l.h*S.rate))+"\n"})});
  s+=`\n${D}\nЧасов всего:               ${r2(c.H)}\nПредварительная стоимость: ${rub(c.S)}\nНалог ${S.tax}%:                  ${rub(c.T)}\nИТОГО:                     ${rub(c.I)}\n\n${NOTE}\n\n${D}\nГРАФИК ОПЛАТЫ\n`;
@@ -176,13 +179,22 @@ function initDocs(){const k=S.kp;["date","valid","stages","days"].forEach(x=>{$(
  document.querySelector(".dtabs").onclick=e=>{const d=e.target.dataset.d;if(d){doc=d;render()}};
  $("pdf").onclick=()=>window.print();$("txt").onclick=()=>dl((doc=="kp"?"kp-":"tz-")+(k.date||"")+".txt",doc=="kp"?txtKP():txtTZ());
  $("share").onclick=()=>{const u=location.origin+location.pathname+"#"+doc+"="+encState(S);$("link").value=u;$("link").select();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>$("msg").textContent="Ссылка на "+(doc=="kp"?"КП":"ТЗ")+" скопирована.",()=>$("msg").textContent="Скопируйте ссылку из поля.")}}
-function render(){if(VIEW||step==3){renderKP();renderTZ()}
+function render(){if(VIEW||step==4){renderKP();renderTZ()}
  document.body.dataset.doc=doc;document.querySelectorAll(".dtabs button").forEach(b=>b.classList.toggle("on",b.dataset.d==doc));
  if(!VIEW){$("stBox").style.display=S.kp.pay=="st"?"":"none";$("kpset").style.display=doc=="kp"?"":"none";$("tzset").style.display=doc=="tz"?"":"none";$("dHint").textContent="Авто: "+autoDays(totals())+" раб. дн. ("+r2(totals().H)+" ч ÷ "+(S.kp.hpd||6)+" ч/день)";save()}
  document.title=(doc=="kp"?"КП":"ТЗ")+(S.client?" — "+S.client:"")+" — Конверсус"}
-function setStep(n){step=n;document.body.dataset.step=n;document.querySelectorAll("#steps button").forEach(b=>b.classList.toggle("on",+b.dataset.s==n));if(n==2)renderBrief();render();window.scrollTo(0,0)}
+function wishL(){return (S.wish||[]).map(x=>String(x).trim()).filter(Boolean)}
+function renderW(){$("wl").innerHTML=S.wish.map((x,j)=>`<div class="it"><input type="text" value="${esc(x)}" data-w="${j}" placeholder="Например: онлайн-запись, каталог, отзывы…"><button class="x" data-wx="${j}" title="Удалить">×</button></div>`).join("")}
+function initW(){if(!Array.isArray(S.wish))S.wish=[];$("needs").value=S.needs||"";$("needs").oninput=()=>{S.needs=$("needs").value;save()};
+ $("wl").oninput=e=>{const j=e.target.dataset.w;if(j!=null){S.wish[j]=e.target.value;save()}};
+ $("wl").onclick=e=>{const j=e.target.dataset.wx;if(j!=null){S.wish.splice(+j,1);renderW();save()}};
+ $("addW").onclick=()=>{S.wish.push("");renderW();const i=$("wl").querySelectorAll("input");i[i.length-1].focus();save()};
+ $("toBrief").onclick=()=>setStep(3);renderW()}
+function initIntro(){const m=v=>{$("gwrap").style.display=v?"":"none";$("cwrap").style.display=v?"none":"";$("modeG").classList.toggle("on",v);$("modeC").classList.toggle("on",!v);localStorage.setItem("kv_deck",v?"g":"c");if(!v)go(cur)};
+ $("modeG").onclick=()=>m(true);$("modeC").onclick=()=>m(false);m(localStorage.getItem("kv_deck")!="c")}
+function setStep(n){step=n;document.body.dataset.step=n;document.querySelectorAll("#steps button").forEach(b=>b.classList.toggle("on",+b.dataset.s==n));if(n==3)renderBrief();if(n==2)renderW();render();window.scrollTo(0,0)}
 
-if(VIEW){doc=VIEW;document.body.classList.add("client");document.body.dataset.step=3;render()}
+if(VIEW){doc=VIEW;document.body.classList.add("client");document.body.dataset.step=4;render()}
 else{$("calcLink").href=CALC_URL;$("steps").onclick=e=>{const b=e.target.closest("button");if(b)setStep(+b.dataset.s)};
  if(banner){$("banner").textContent=banner;$("banner").style.display="block"}
- initDeck();initBrief();initDocs();setStep(step)}
+ initDeck();initIntro();initW();initBrief();initDocs();setStep(step)}
