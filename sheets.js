@@ -4,6 +4,7 @@ const LS="kv_sheets_url";
 const url=()=>(localStorage.getItem(LS)||(typeof SHEETS_URL!=="undefined"?SHEETS_URL:"")||"").trim();
 const NOURL="Таблица не подключена: нажмите «⚙ Таблица» и вставьте URL веб-приложения Apps Script (…/exec).";
 const m=t=>{$("msg").textContent=t};
+function fdt(d){const x=new Date(d);return isNaN(x)?String(d||""):x.toLocaleDateString("ru-RU")}
 function newId(){return "m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function row(){if(!S.mid)S.mid=newId();const c=totals(),base=location.origin+location.pathname,e=encState(S);
  return {id:S.mid,date:(S.kp&&S.kp.date)||new Date().toISOString().slice(0,10),client:S.client||"",proj:S.proj||"",needs:(S.needs||"").trim(),
@@ -18,7 +19,7 @@ async function openSheet(){const u=url(),box=$("shList");box.style.display="bloc
  if(!u){box.innerHTML=`<p class="shw">${NOURL}</p>`;return}
  box.innerHTML="<p>Загружаю список…</p>";
  try{const j=await (await fetch(u+(u.includes("?")?"&":"?")+"action=list")).json();if(!j.ok)throw new Error(j.error);
-  box.innerHTML=j.items.length?j.items.map(i=>`<button class="shi" data-id="${esc(i.id)}"><b>${esc(i.client||"Без клиента")}</b> — ${esc(i.proj||"")}<small>${esc(String(i.date))} · ${esc(String(i.plat||""))} · ${Number(i.total||0).toLocaleString("ru")} ₽</small></button>`).join(""):"<p>В таблице пока нет встреч.</p>";
+  box.innerHTML=j.items.length?j.items.map(i=>`<button class="shi" data-id="${esc(i.id)}"><b>${esc(i.client||"Без клиента")}</b> — ${esc(i.proj||"")}<small>${esc(fdt(i.date))} · ${esc(String(i.plat||""))} · ${Number(i.total||0).toLocaleString("ru")} ₽</small></button>`).join(""):"<p>В таблице пока нет встреч.</p>";
  }catch(e){box.innerHTML=`<p class="shw">Не удалось загрузить: ${esc(e.message)}</p>`}}
 async function load(id){const u=url();$("shList").innerHTML="<p>Открываю…</p>";
  try{const j=await (await fetch(u+(u.includes("?")?"&":"?")+"id="+encodeURIComponent(id))).json();if(!j.ok)throw new Error(j.error);
