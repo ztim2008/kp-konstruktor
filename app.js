@@ -138,7 +138,7 @@ function tzData(){const L=lines(),has=id=>L.some(l=>l.id==id),T=[];
  const bl=L.filter(l=>l.g=="blocks");const st=[];if(bl.length)st.push([S.type=="landing"?"Главная страница (лендинг) — блоки по порядку":"Главная страница — блоки по порядку",bl.map(l=>[l.n,l.d])]);
  L.filter(l=>l.id=="a_pb"||l.id=="a_sb").forEach(l=>st.push([l.n,[["Состав",l.d]]]));
  if(st.length)T.push(["Структура сайта",st,"struct"]);
- const sect=(t,g,extra=[])=>{const a=L.filter(l=>g.includes(l.g)&&!l.auto&&l.id!="domain"&&l.id!="hosting").map(l=>[l.n,l.d]).concat(extra);if(a.length)T.push([t,a,"kv"])};
+ const sect=(t,g,extra=[])=>{const a=L.filter(l=>g.includes(l.g)&&!l.auto&&l.id!="domain"&&l.id!="hosting").map(l=>[l.n,l.d]).concat(extra).filter((x,i,arr)=>arr.findIndex(y=>y[0]==x[0])==i);if(a.length)T.push([t,a,"kv"])};
  {const w=wishL();if(S.needs.trim()||w.length){const a=[];if(S.needs.trim())a.push(["Что нужно клиенту",S.needs.trim()]);w.forEach((x,j)=>a.push(["Пожелание "+(j+1),x]));T.push(["Пожелания клиента",a,"kv"])}}
  sect("Подготовка",["prep"]);sect("Дизайн",["design"],L.filter(l=>l.id=="a_pd"||l.id=="a_sd").map(l=>[l.n,l.d]));
  sect("Вёрстка и технические требования",["plat"],[["Общие требования","Валидная вёрстка, HTTPS, корректная работа форм, быстрая загрузка, отображение в актуальных версиях браузеров."]]);
