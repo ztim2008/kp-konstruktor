@@ -4,7 +4,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css"></head><body>
-<header id="top"><a class="logo" href="http://leadweb.site" target="_blank" rel="noopener" style="text-decoration:none">LEAD-WEB</a>
+<header id="top"><a class="logo" href="http://leadweb.site" target="_blank" rel="noopener" style="text-decoration:none">Lead-web</a>
  <nav id="steps"><button data-s="1"><i>1</i>Знакомство</button><button data-s="2"><i>2</i>Сбор данных</button><button data-s="3"><i>3</i>Бриф</button><button data-s="4"><i>4</i>Документы</button></nav>
  <a id="calcLink" href="#">Калькулятор смет ↗</a></header>
 <div id="banner"></div>
@@ -56,11 +56,13 @@
    <h4>Блоки в КП</h4><div id="kpb"></div></div>
   <div id="tzset"><h3>Настройки ТЗ</h3><p class="note">ТЗ собирается из брифа автоматически, цен в нём нет. Поменяйте галочки на шаге «Бриф», и ТЗ обновится.</p></div>
   <div class="acts"><button id="pdf" class="primary">Скачать PDF</button><button id="share">Поделиться ссылкой</button><button id="txt">Скачать .txt</button>
+   <div class="shrow"><button id="toSheet" class="primary">Сохранить в таблицу</button><button id="fromSheet">Открыть из таблицы</button><button id="shNew" title="Сохранять как новую встречу">+ Новая</button><button id="sheetCfg" title="Настройки таблицы">⚙ Таблица</button></div><small id="shState" class="shw"></small><div id="shList"></div>
    <input id="link" readonly placeholder="Ссылка появится здесь"><small id="msg"></small></div>
  </aside>
  <main id="docs"><div id="doc-kp" class="doc"></div><div id="doc-tz" class="doc"></div></main></div>
 </section>
 <a id="cta" href="https://t.me/bilarius" target="_blank" rel="noopener">Обсудить в Telegram</a>
 <script src="https://ztim2008.github.io/smeta-calculator/data.js"></script>
-<script src="content.js"></script><script src="brief-data.js"></script><script src="app.js"></script>
+<script src="config.js"></script><script src="content.js"></script><script src="brief-data.js"></script><script src="app.js"></script><script src="sheets.js"></script>
+<div id="shSet"><div class="shbox"><h3>Google Таблица</h3><p>Вставьте URL веб-приложения Apps Script (заканчивается на /exec). Хранится в этом браузере; для всех — пропишите в config.js.</p><input id="shUrl" placeholder="https://script.google.com/macros/s/…/exec"><div class="shrow"><button id="shSave" class="primary">Сохранить</button><button id="shCancel">Отмена</button></div></div></div>
 </body></html>

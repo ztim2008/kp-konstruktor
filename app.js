@@ -44,7 +44,7 @@ function sched(){const k=S.kp;if(k.pay=="100")return[["Предоплата 100%
 
 /* ===== STEP 1: deck ===== */
 const E=(p,tag="span",cls="")=>`<${tag} class="${cls}" data-e="${p}">${esc(getP(C,p))}</${tag}>`;
-const sh=(kick,title,body,cls="")=>`<div class="sl ${cls}"><div class="skick">${kick}</div><h2>${title}</h2>${body}<div class="sfoot"><a href="http://leadweb.site" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">LEAD-WEB · leadweb.site</a></div></div>`;
+const sh=(kick,title,body,cls="")=>`<div class="sl ${cls}"><div class="skick">${kick}</div><h2>${title}</h2>${body}<div class="sfoot"><a href="http://leadweb.site" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">Lead-web · leadweb.site</a></div></div>`;
 function slides(){const s=[];
  s.push(`<div class="sl scover"><div class="skick">${E("deck.kicker")}</div><h1>${E("deck.brand")}</h1><div class="stag">${E("deck.tagline")}</div><div class="sbar"></div></div>`);
  s.push(sh("Знакомство",E("team.title"),`<p class="slead">${E("team.lead")}</p><div class="sg2">${C.team.people.map((p,j)=>`<div class="sc"><div class="spn">${E(`team.people.${j}.n`)}</div><div class="spr">${E(`team.people.${j}.r`)}</div><div class="spy">${E(`team.people.${j}.y`)}</div><p>«${E(`team.people.${j}.q`)}»</p></div>`).join("")}</div>`));
@@ -107,11 +107,11 @@ function initBrief(){$("presets").innerHTML=PRESETS.map((p,j)=>`<button data-p="
 function renderBriefSums(){}
 
 /* ===== STEP 3: documents ===== */
-const PF=`<div class="pfoot">LEAD-WEB · leadweb.site · Сайты, которые приводят заявки</div>`;
+const PF=`<div class="pfoot">Lead-web · leadweb.site · Сайты, которые приводят заявки</div>`;
 const sec=(num,kick,title,body,cls="")=>`<section class="pg ${cls}"><div class="kick"><span>${num}</span>${kick}</div><h2>${title}</h2>${body}${PF}</section>`;
 const grpL=L=>GROUPS.map(([g,n])=>[n,L.filter(l=>l.g==g)]).filter(x=>x[1].length);
 const platN=()=>PLATS[PI()][1],typeN=()=>TYPES.find(t=>t[0]==S.type)[1]+(S.type=="multi"?` (главная + ${S.pages} внутр. стр.)`:"");
-function cover(kind,c){return `<section class="pg cover"><div class="ctop"><div class="brand"><a href="http://leadweb.site" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">LEAD-WEB</a></div></div><div class="cmid"><div class="kick"><span>${kind=="kp"?"КП":"ТЗ"}</span>${kind=="kp"?"Коммерческое предложение":"Техническое задание"}</div>
+function cover(kind,c){return `<section class="pg cover"><div class="ctop"><div class="brand"><a href="http://leadweb.site" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">Lead-web</a></div></div><div class="cmid"><div class="kick"><span>${kind=="kp"?"КП":"ТЗ"}</span>${kind=="kp"?"Коммерческое предложение":"Техническое задание"}</div>
  <h1>${esc(S.proj||"Разработка сайта")}</h1>${S.client?`<div class="for">для <b>${esc(S.client)}</b></div>`:""}${S.task.trim()?`<div class="task"><small>Задача</small><p>${esc(S.task).replace(/\n/g,"<br>")}</p></div>`:""}</div>
  <div class="cbot"><div><small>Дата</small>${fd(S.kp.date)}</div>${kind=="kp"&&S.kp.valid?`<div><small>Предложение действительно до</small>${fd(S.kp.valid)}</div><div><small>Стоимость</small><b class="acc">${rub(c.I)}</b></div>`:`<div><small>Платформа</small>${platN()}</div><div><small>Тип сайта</small>${typeN()}</div>`}</div></section>`}
 function renderKP(){const L=lines(),c=totals(L),b=S.kp.b,o=[];let n=0;const N=()=>String(++n).padStart(2,"0");

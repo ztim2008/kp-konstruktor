@@ -138,3 +138,9 @@ body.client #cta{display:block;position:fixed;right:20px;bottom:20px;background:
 #modeG.on,#modeC.on{background:#111;color:#fff}.btnl{display:inline-block;text-decoration:none;padding:8px 14px}
 .gtitle{font-weight:600}.sdw{max-width:900px;margin:0 auto}.sdw textarea{width:100%;font-size:16px}
 #wl .it{display:flex;gap:8px;align-items:center;margin:6px 0}#wl .it input{flex:1;padding:8px}.acts2{margin-top:18px;text-align:right}
+.scover h1{text-transform:none}
+.shrow{display:flex;gap:6px;flex-wrap:wrap}.shrow button{flex:1;margin:0}.shrow .primary{width:auto}.shw{color:#b54708}
+#shList{display:none;max-height:320px;overflow:auto;border:1px solid var(--l);border-radius:8px}#shList p{margin:8px 10px;font-size:13px}
+.shi{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--l);border-radius:0;background:#fff;padding:8px 10px;font-family:inherit;font-size:14px;cursor:pointer}.shi:hover{background:#e8f7ef}.shi small{display:block;color:var(--m);font-size:12px}
+#shSet{display:none;position:fixed;inset:0;background:#0008;z-index:99;align-items:center;justify-content:center}.shbox{background:#fff;padding:22px;border-radius:12px;width:min(520px,92vw)}.shbox input{width:100%;margin:8px 0 12px;padding:9px;box-sizing:border-box}
+@media print{.shrow,#shList,#shSet,#shState{display:none!important}}
