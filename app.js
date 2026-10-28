@@ -44,7 +44,7 @@ function sched(){const k=S.kp;if(k.pay=="100")return[["Предоплата 100%
 
 /* ===== STEP 1: deck ===== */
 const E=(p,tag="span",cls="")=>`<${tag} class="${cls}" data-e="${p}">${esc(getP(C,p))}</${tag}>`;
-const sh=(kick,title,body,cls="")=>`<div class="sl ${cls}"><div class="skick">${kick}</div><h2>${title}</h2>${body}<div class="sfoot">КОНВЕРСУС</div></div>`;
+const sh=(kick,title,body,cls="")=>`<div class="sl ${cls}"><div class="skick">${kick}</div><h2>${title}</h2>${body}<div class="sfoot"><a href="http://leadweb.site" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">LEAD-WEB · leadweb.site</a></div></div>`;
 function slides(){const s=[];
  s.push(`<div class="sl scover"><div class="skick">${E("deck.kicker")}</div><h1>${E("deck.brand")}</h1><div class="stag">${E("deck.tagline")}</div><div class="sbar"></div></div>`);
  s.push(sh("Знакомство",E("team.title"),`<p class="slead">${E("team.lead")}</p><div class="sg2">${C.team.people.map((p,j)=>`<div class="sc"><div class="spn">${E(`team.people.${j}.n`)}</div><div class="spr">${E(`team.people.${j}.r`)}</div><div class="spy">${E(`team.people.${j}.y`)}</div><p>«${E(`team.people.${j}.q`)}»</p></div>`).join("")}</div>`));
@@ -54,7 +54,7 @@ function slides(){const s=[];
  ["case1","case2"].forEach((k,n)=>s.push(sh("Кейс "+(n+1),E(k+".title"),`<a class="surl" href="${C[k].url}" target="_blank">${C[k].url.replace(/^https?:\/\//,"").replace(/\/$/,"")}</a><div class="scase"><div class="sc"><h3>Было</h3><p>${E(k+".was")}</p></div><div class="sc"><h3>Сделали</h3><ul>${C[k].did.map((d,j)=>`<li>${E(`${k}.did.${j}`)}</li>`).join("")}</ul></div><div class="sc dark"><h3>Результат</h3><p>${E(k+".res")}</p></div></div>`)));
  s.push(sh("Кейсы",E("list.title"),`<div class="slist">${C.list.groups.map(([g,a],gi)=>`<div><h3>${esc(g)}</h3><ul>${a.map(([t,u],j)=>`<li>${E(`list.groups.${gi}.1.${j}.0`)} — <a href="${u}" target="_blank">${u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</a></li>`).join("")}</ul></div>`).join("")}</div>`,"slong"));
  s.push(sh("Чем мы отличаемся",E("why.title"),`<p class="slead">${E("team.lead")}</p><div class="sg3">${C.why.items.map((p,j)=>`<div class="sc"><div class="snum">0${j+1}</div><h3>${E(`why.items.${j}.0`)}</h3><p>${E(`why.items.${j}.1`)}</p></div>`).join("")}</div>`));
- s.push(`<div class="sl scont"><div class="skick">Контакты</div><h2>${E("contacts.title")}</h2><p class="slead">${E("contacts.lead")}</p><div class="scl"><a href="${C.contacts.tgUrl}" target="_blank"><small>Telegram</small>${esc(C.contacts.tg)}</a><a href="${C.contacts.tel}"><small>Телефон</small>${esc(C.contacts.phone)}</a><a href="mailto:${C.contacts.mail}"><small>Почта</small>${esc(C.contacts.mail)}</a></div></div>`);
+ s.push(`<div class="sl scont"><div class="skick">Контакты</div><h2>${E("contacts.title")}</h2><p class="slead">${E("contacts.lead")}</p><div class="scl"><a href="${C.contacts.tgUrl}" target="_blank"><small>Telegram</small>${esc(C.contacts.tg)}</a><a href="${C.contacts.tel}"><small>Телефон</small>${esc(C.contacts.phone)}</a><a href="mailto:${C.contacts.mail}"><small>Почта</small>${esc(C.contacts.mail)}</a><a href="http://leadweb.site" target="_blank"><small>Сайт</small>leadweb.site</a></div></div>`);
  return s}
 let cur=0,editing=false,NS=0;
 function renderDeck(){const s=slides();NS=s.length;$("deck").innerHTML=s.map((h,j)=>h.replace('class="sl','data-i="'+j+'" class="sl')).join("");$("dots").innerHTML=s.map((_,j)=>`<button data-j="${j}"></button>`).join("");setEdit(editing);go(cur)}
@@ -107,11 +107,11 @@ function initBrief(){$("presets").innerHTML=PRESETS.map((p,j)=>`<button data-p="
 function renderBriefSums(){}
 
 /* ===== STEP 3: documents ===== */
-const PF=`<div class="pfoot">КОНВЕРСУС · Сайты, которые приводят заявки</div>`;
+const PF=`<div class="pfoot">LEAD-WEB · leadweb.site · Сайты, которые приводят заявки</div>`;
 const sec=(num,kick,title,body,cls="")=>`<section class="pg ${cls}"><div class="kick"><span>${num}</span>${kick}</div><h2>${title}</h2>${body}${PF}</section>`;
 const grpL=L=>GROUPS.map(([g,n])=>[n,L.filter(l=>l.g==g)]).filter(x=>x[1].length);
 const platN=()=>PLATS[PI()][1],typeN=()=>TYPES.find(t=>t[0]==S.type)[1]+(S.type=="multi"?` (главная + ${S.pages} внутр. стр.)`:"");
-function cover(kind,c){return `<section class="pg cover"><div class="ctop"><div class="brand">КОНВЕРСУС</div></div><div class="cmid"><div class="kick"><span>${kind=="kp"?"КП":"ТЗ"}</span>${kind=="kp"?"Коммерческое предложение":"Техническое задание"}</div>
+function cover(kind,c){return `<section class="pg cover"><div class="ctop"><div class="brand"><a href="http://leadweb.site" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">LEAD-WEB</a></div></div><div class="cmid"><div class="kick"><span>${kind=="kp"?"КП":"ТЗ"}</span>${kind=="kp"?"Коммерческое предложение":"Техническое задание"}</div>
  <h1>${esc(S.proj||"Разработка сайта")}</h1>${S.client?`<div class="for">для <b>${esc(S.client)}</b></div>`:""}${S.task.trim()?`<div class="task"><small>Задача</small><p>${esc(S.task).replace(/\n/g,"<br>")}</p></div>`:""}</div>
  <div class="cbot"><div><small>Дата</small>${fd(S.kp.date)}</div>${kind=="kp"&&S.kp.valid?`<div><small>Предложение действительно до</small>${fd(S.kp.valid)}</div><div><small>Стоимость</small><b class="acc">${rub(c.I)}</b></div>`:`<div><small>Платформа</small>${platN()}</div><div><small>Тип сайта</small>${typeN()}</div>`}</div></section>`}
 function renderKP(){const L=lines(),c=totals(L),b=S.kp.b,o=[];let n=0;const N=()=>String(++n).padStart(2,"0");
@@ -127,12 +127,12 @@ function renderKP(){const L=lines(),c=totals(L),b=S.kp.b,o=[];let n=0;const N=()
  if(b.why)o.push(sec(N(),"Чем мы отличаемся",esc(C.why.title),`<div class="g3">${C.why.items.map((s,j)=>`<div class="card"><div class="num">0${j+1}</div><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div>`).join("")}</div>`));
  ["case1","case2"].forEach((k,i)=>{if(!b[k])return;const x=C[k];o.push(sec(N(),"Кейс "+(i+1),esc(x.title),`<a class="url" href="${x.url}" target="_blank">${x.url.replace(/^https?:\/\//,"").replace(/\/$/,"")}</a><div class="case"><div class="card"><h3>Было</h3><p>${esc(x.was)}</p></div><div class="card"><h3>Сделали</h3><ul>${x.did.map(d=>`<li>${esc(d)}</li>`).join("")}</ul></div><div class="card dark"><h3>Результат</h3><p>${esc(x.res)}</p></div></div>`))});
  if(b.list)o.push(sec(N(),"Кейсы",esc(C.list.title),C.list.groups.map(([g,a])=>`<h3>${esc(g)}</h3><ul class="pl">${a.map(([t,u])=>`<li>${esc(t)} — <a href="${u}" target="_blank">${u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</a></li>`).join("")}</ul>`).join(""),"flow"));
- o.push(`<section class="pg contacts"><div class="kick"><span>${N()}</span>Контакты</div><h2>${esc(C.contacts.title)}</h2><p class="lead">${esc(C.contacts.lead)}</p><div class="cl"><a href="${C.contacts.tgUrl}" target="_blank"><small>Telegram</small>${esc(C.contacts.tg)}</a><a href="${C.contacts.tel}"><small>Телефон</small>${esc(C.contacts.phone)}</a><a href="mailto:${C.contacts.mail}"><small>Почта</small>${esc(C.contacts.mail)}</a></div><a class="ctab" href="${C.contacts.tgUrl}" target="_blank">Обсудить в Telegram →</a>${PF}</section>`);
+ o.push(`<section class="pg contacts"><div class="kick"><span>${N()}</span>Контакты</div><h2>${esc(C.contacts.title)}</h2><p class="lead">${esc(C.contacts.lead)}</p><div class="cl"><a href="${C.contacts.tgUrl}" target="_blank"><small>Telegram</small>${esc(C.contacts.tg)}</a><a href="${C.contacts.tel}"><small>Телефон</small>${esc(C.contacts.phone)}</a><a href="mailto:${C.contacts.mail}"><small>Почта</small>${esc(C.contacts.mail)}</a><a href="http://leadweb.site" target="_blank"><small>Сайт</small>leadweb.site</a></div><a class="ctab" href="${C.contacts.tgUrl}" target="_blank">Обсудить в Telegram →</a>${PF}</section>`);
  $("doc-kp").innerHTML=o.join("")}
 const PLAT_D={tilda:"Сайт собирается на конструкторе Тильда (стандартные блоки и Zero Block). Заказчик оплачивает тариф Тильды и получает доступ к редактированию.",cms:"Сайт с системой управления (CMS): заказчик самостоятельно меняет тексты, фото, цены и добавляет материалы через админ-панель.",code:"Сайт разрабатывается на собственном коде (фронтенд и бэкенд) с админ-панелью; размещается на хостинге/сервере заказчика."};
 const TYPE_D={landing:"Одностраничный сайт (лендинг): все блоки на одной странице, навигация по якорям.",multi:"Многостраничный сайт: главная страница и внутренние страницы с общим меню и футером.",shop:"Интернет-магазин: каталог товаров, карточки, корзина и оформление заказа."};
 function tzData(){const L=lines(),has=id=>L.some(l=>l.id==id),T=[];
- T.push(["Общие сведения",[["Проект",S.proj||"—"],["Заказчик",S.client||"—"],["Исполнитель","Команда «Конверсус»"],["Дата",fd(S.kp.date)]],"kv"]);
+ T.push(["Общие сведения",[["Проект",S.proj||"—"],["Заказчик",S.client||"—"],["Исполнитель","Команда «Lead-web» (leadweb.site)"],["Дата",fd(S.kp.date)]],"kv"]);
  T.push(["Цели и задачи",[S.task.trim()||"Задача уточняется с заказчиком.","Сайт должен понятно представлять компанию и продукт, вызывать доверие и приводить заявки."],"p"]);
  T.push(["Платформа и тип сайта",[["Платформа",platN()+". "+PLAT_D[S.plat]],["Тип сайта",typeN()+". "+TYPE_D[S.type]]],"kv"]);
  const bl=L.filter(l=>l.g=="blocks");const st=[];if(bl.length)st.push([S.type=="landing"?"Главная страница (лендинг) — блоки по порядку":"Главная страница — блоки по порядку",bl.map(l=>[l.n,l.d])]);
@@ -160,18 +160,18 @@ function renderTZ(){const T=tzData(),c=totals(),o=[cover("tz",c)];let body="";
   else if(k=="p")h+=a.map(x=>`<p>${esc(x).replace(/\n/g,"<br>")}</p>`).join("");else h+=`<${k}>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</${k}>`;
   body+=h+"</div>"});
  o.push(`<section class="pg flow tz"><div class="kick"><span>ТЗ</span>Техническое задание</div><h2>${esc(S.proj||"Разработка сайта")}</h2>${body}${PF}</section>`);
- o.push(`<section class="pg contacts"><div class="kick"><span>✓</span>Контакты</div><h2>${esc(C.contacts.title)}</h2><p class="lead">${esc(C.contacts.lead)}</p><div class="cl"><a href="${C.contacts.tgUrl}" target="_blank"><small>Telegram</small>${esc(C.contacts.tg)}</a><a href="${C.contacts.tel}"><small>Телефон</small>${esc(C.contacts.phone)}</a><a href="mailto:${C.contacts.mail}"><small>Почта</small>${esc(C.contacts.mail)}</a></div>${PF}</section>`);
+ o.push(`<section class="pg contacts"><div class="kick"><span>✓</span>Контакты</div><h2>${esc(C.contacts.title)}</h2><p class="lead">${esc(C.contacts.lead)}</p><div class="cl"><a href="${C.contacts.tgUrl}" target="_blank"><small>Telegram</small>${esc(C.contacts.tg)}</a><a href="${C.contacts.tel}"><small>Телефон</small>${esc(C.contacts.phone)}</a><a href="mailto:${C.contacts.mail}"><small>Почта</small>${esc(C.contacts.mail)}</a><a href="http://leadweb.site" target="_blank"><small>Сайт</small>leadweb.site</a></div>${PF}</section>`);
  $("doc-tz").innerHTML=o.join("")}
 function txtKP(){const L=lines(),c=totals(L),D="-".repeat(64),pad=(a,n)=>a.length>=n?a:a+" ".repeat(n-a.length);
- let s=`КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ — КОНВЕРСУС\n${D}\n`+(S.client?`Клиент: ${S.client}\n`:"")+`Проект: ${S.proj||"—"}\nДата: ${fd(S.kp.date)}\n`+(S.kp.valid?`Действительно до: ${fd(S.kp.valid)}\n`:"")+(S.task.trim()?`\nЗадача клиента:\n${S.task.trim()}\n`:"");
+ let s=`КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ — Lead-web (http://leadweb.site)\n${D}\n`+(S.client?`Клиент: ${S.client}\n`:"")+`Проект: ${S.proj||"—"}\nДата: ${fd(S.kp.date)}\n`+(S.kp.valid?`Действительно до: ${fd(S.kp.valid)}\n`:"")+(S.task.trim()?`\nЗадача клиента:\n${S.task.trim()}\n`:"");
  {const w=wishL();if(S.needs.trim()||w.length){s+=`\nПожелания клиента:\n`+(S.needs.trim()?S.needs.trim()+"\n":"")+w.map(x=>"- "+x+"\n").join("")}}
  s+=`\nПлатформа: ${platN()}\nТип сайта: ${typeN()}\n\n${D}\nСТОИМОСТЬ РАБОТ (ставка ${rub(S.rate)} / час)\n${D}\n`;
  grpL(L).forEach(([g,a])=>{s+=`\n${g.toUpperCase()}\n`;a.forEach(l=>{const t="- "+l.n+(l.client?" (оплачивает клиент)":"");s+=(t.length>45?t+"\n"+" ".repeat(46):pad(t,46))+(l.client?"—":pad(String(r2(l.h)),7)+rub(l.h*S.rate))+"\n"})});
  s+=`\n${D}\nЧасов всего:               ${r2(c.H)}\nПредварительная стоимость: ${rub(c.S)}\nНалог ${S.tax}%:                  ${rub(c.T)}\nИТОГО:                     ${rub(c.I)}\n\n${NOTE}\n\n${D}\nГРАФИК ОПЛАТЫ\n`;
- sched().forEach(([t,p])=>s+=`- ${t}: ${p}% — ${rub(c.I*p/100)}\n`);s+=`Ориентировочный срок: ${daysText(c)}\n\n${D}\nКонтакты: Telegram ${C.contacts.tg} (${C.contacts.tgUrl}), ${C.contacts.phone}, ${C.contacts.mail}\n`;return s}
-function txtTZ(){const D="-".repeat(64);let s=`ТЕХНИЧЕСКОЕ ЗАДАНИЕ — КОНВЕРСУС\n${D}\n`;
+ sched().forEach(([t,p])=>s+=`- ${t}: ${p}% — ${rub(c.I*p/100)}\n`);s+=`Ориентировочный срок: ${daysText(c)}\n\n${D}\nКонтакты: Telegram ${C.contacts.tg} (${C.contacts.tgUrl}), ${C.contacts.phone}, ${C.contacts.mail}, http://leadweb.site\n`;return s}
+function txtTZ(){const D="-".repeat(64);let s=`ТЕХНИЧЕСКОЕ ЗАДАНИЕ — Lead-web (http://leadweb.site)\n${D}\n`;
  tzData().forEach(([t,a,k],i)=>{s+=`\n${i+1}. ${t.toUpperCase()}\n`;if(k=="kv")a.forEach(([x,y])=>s+=`- ${x}: ${y}\n`);else if(k=="struct")a.forEach(([n,r])=>{s+=`${n}:\n`;r.forEach(([x,y],j)=>s+=`  ${j+1}. ${x} — ${y}\n`)});else if(k=="p")a.forEach(x=>s+=x+"\n");else a.forEach((x,j)=>s+=(k=="ol"?(j+1)+". ":"- ")+x+"\n")});
- return s+`\n${D}\nКонтакты: Telegram ${C.contacts.tg} (${C.contacts.tgUrl}), ${C.contacts.phone}, ${C.contacts.mail}\n`}
+ return s+`\n${D}\nКонтакты: Telegram ${C.contacts.tg} (${C.contacts.tgUrl}), ${C.contacts.phone}, ${C.contacts.mail}, http://leadweb.site\n`}
 function dl(name,s){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+s],{type:"text/plain;charset=utf-8"}));a.download=name;a.click()}
 function initDocs(){const k=S.kp;["date","valid","stages","days"].forEach(x=>{$(x).value=k[x];$(x).oninput=()=>{k[x]=$(x).value;render()}});$("hpd").value=k.hpd;$("hpd").oninput=()=>{k.hpd=+$("hpd").value||6;render()};
  $("pay").value=k.pay;$("pay").onchange=()=>{k.pay=$("pay").value;if(k.pay=="st"&&!k.stages.trim()){k.stages="Предоплата; 30\nДизайн / прототип; 30\nРазработка; 30\nЗапуск; 10";$("stages").value=k.stages}render()};
@@ -182,7 +182,7 @@ function initDocs(){const k=S.kp;["date","valid","stages","days"].forEach(x=>{$(
 function render(){if(VIEW||step==4){renderKP();renderTZ()}
  document.body.dataset.doc=doc;document.querySelectorAll(".dtabs button").forEach(b=>b.classList.toggle("on",b.dataset.d==doc));
  if(!VIEW){$("stBox").style.display=S.kp.pay=="st"?"":"none";$("kpset").style.display=doc=="kp"?"":"none";$("tzset").style.display=doc=="tz"?"":"none";$("dHint").textContent="Авто: "+autoDays(totals())+" раб. дн. ("+r2(totals().H)+" ч ÷ "+(S.kp.hpd||6)+" ч/день)";save()}
- document.title=(doc=="kp"?"КП":"ТЗ")+(S.client?" — "+S.client:"")+" — Конверсус"}
+ document.title=(doc=="kp"?"КП":"ТЗ")+(S.client?" — "+S.client:"")+" — Lead-web"}
 function wishL(){return (S.wish||[]).map(x=>String(x).trim()).filter(Boolean)}
 function renderW(){$("wl").innerHTML=S.wish.map((x,j)=>`<div class="it"><input type="text" value="${esc(x)}" data-w="${j}" placeholder="Например: онлайн-запись, каталог, отзывы…"><button class="x" data-wx="${j}" title="Удалить">×</button></div>`).join("")}
 function initW(){if(!Array.isArray(S.wish))S.wish=[];$("needs").value=S.needs||"";$("needs").oninput=()=>{S.needs=$("needs").value;save()};
