@@ -40,9 +40,11 @@ h1,h2,h3{font-family:Oswald;text-transform:uppercase;margin:.3em 0;line-height:1
 #cta{display:none}
 body.client #app{display:block}body.client #ed{display:none}
 body.client #cta{display:block;position:fixed;right:20px;bottom:20px;background:var(--or);color:#fff;padding:15px 22px;border-radius:40px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px #0004;z-index:9}
-@media(max-width:900px){#app{grid-template-columns:1fr}#ed{position:static;height:auto}#pv{padding:10px}
+@media screen and (max-width:900px){#app{grid-template-columns:1fr}#ed{position:static;height:auto}#pv{padding:10px}
  .pg{width:100%;min-height:auto;padding:22px 18px 40px}h2{font-size:28px}.cover{min-height:80vh}.cover h1{font-size:34px}.g2,.g3,.case{grid-template-columns:1fr}.pl{columns:1}.pfoot{left:18px;right:18px;bottom:12px}
  .t{font-size:12.5px}.t th,.t td{padding:7px 6px}body.client #cta{left:16px;right:16px;text-align:center}}
 @page{size:A4;margin:0}
 @media print{body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}#ed,#cta{display:none!important}#app{display:block}#pv{padding:0;gap:0;display:block}
- .pg{box-shadow:none;width:210mm;min-height:297mm;break-after:page;page-break-after:always}.pg:last-child{break-after:auto}.pg.long{min-height:297mm}}
+ .pg{box-shadow:none;width:210mm;min-height:0;padding:12mm 16mm 6mm;break-inside:avoid}.pg .pfoot{display:none}.pg h2{font-size:34px}
+ .pg.long{break-inside:auto}.cover,.contacts{min-height:297mm;break-after:page}.contacts{break-before:page;break-after:auto}.cover .pfoot,.contacts .pfoot{display:block}
+ .pg[data-k=calc],.pg[data-k=team]{break-before:page}}
